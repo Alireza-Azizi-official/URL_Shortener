@@ -20,6 +20,6 @@ app.include_router(router)
 app.add_middleware(VisitLoggingMiddleware)
 
 
-@app.get("/health")
+@app.get("/health", tags=['HEALTH'])
 async def health():
     return {"status": "ok"}
