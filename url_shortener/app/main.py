@@ -1,18 +1,21 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app import shortener
-from app.config import settings
 from app.db import create_tables_if_not_exist
 from app.middleware import VisitLoggingMiddleware
-
-app = FastAPI()
-app.include_router(shortener.router)
-app.add_middleware(VisitLoggingMiddleware)
+from app.shortener import router
 
 
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await create_tables_if_not_exist()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+app.include_router(router)
+app.add_middleware(VisitLoggingMiddleware)
 
 
 @app.get("/health")
