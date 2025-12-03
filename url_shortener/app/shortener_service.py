@@ -10,39 +10,31 @@ COUNT_KEY = "count:{}"
 
 
 async def create_short_url(original_url: str, session: AsyncSession, redis):
-    new = URL(original_url=original_url)
-    session.add(new)
+    if not isinstance(original_url, str):
+        original_url = str(original_url)
 
+    new_url = URL(original_url=original_url, short_code="temp")
+    session.add(new_url)
     await session.flush()
-    if not new.id:
-        await session.rollback()
-        raise Exception("cannot create")
 
-    short_code = encode_base62(new.id)
-    new.short_code = short_code
-    session.add(new)
 
-    try:
-        await session.commit()
-    except IntegrityError:
-        await session.rollback()
-        new.short_code = short_code
-        session.add(new)
-        await session.commit()
+    new_url.short_code = encode_base62(new_url.id)
+    await session.commit()
 
-    await redis.set(URL_KEY.format(short_code), new.original_url)
-    await redis.set(COUNT_KEY.format(short_code), 0)
 
-    short_url = f"{settings.BASE_URL.rstrip('/')}/{short_code}"
+    await redis.set(URL_KEY.format(new_url.short_code), new_url.original_url)
+    await redis.set(COUNT_KEY.format(new_url.short_code), 0)
 
-    return {"short_code": short_code, "short_url": short_url}
+    short_url = f"{settings.BASE_URL.rstrip('/')}/{new_url.short_code}"
+    return {"short_code": new_url.short_code, "short_url": short_url}
+
 
 
 async def get_original_url(short_code: str, session: AsyncSession, redis):
-    cached = await redis.get(URL_KEY.format(short_code))
-    if cached:
+    cached_url = await redis.get(URL_KEY.format(short_code))
+    if cached_url:
         await redis.incr(COUNT_KEY.format(short_code))
-        return cached
+        return cached_url
 
     q = select(URL).where(URL.short_code == short_code)
     res = await session.execute(q)
@@ -56,7 +48,7 @@ async def get_original_url(short_code: str, session: AsyncSession, redis):
     await session.execute(
         update(URL)
         .where(URL.id == url_obj.id)
-        .values(visits_count=URL.visits_count + 1)
+        .values(visits_count=url_obj.visits_count + 1)
     )
     await session.commit()
 
@@ -64,20 +56,17 @@ async def get_original_url(short_code: str, session: AsyncSession, redis):
 
 
 async def get_stats(short_code: str, session: AsyncSession, redis):
-    count = await redis.get(COUNT_KEY.format(short_code))
+    cached_count = await redis.get(COUNT_KEY.format(short_code))
 
     q = select(URL).where(URL.short_code == short_code)
     res = await session.execute(q)
     url_obj = res.scalar_one_or_none()
-
     if not url_obj:
         return None
 
-    if count is None:
+    visits = int(cached_count) if cached_count is not None else url_obj.visits_count
+    if cached_count is None:
         await redis.set(COUNT_KEY.format(short_code), url_obj.visits_count)
-        visits = url_obj.visits_count
-    else:
-        visits = int(count)
 
     return {
         "short_code": short_code,
