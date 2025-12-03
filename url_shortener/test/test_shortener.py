@@ -1,6 +1,6 @@
 import pytest
 from app.db import Base
-from app.main import app
+from url_shortener.app.main import app
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine
 
