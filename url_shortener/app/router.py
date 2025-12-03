@@ -1,7 +1,7 @@
 from app.db import get_session
 from app.dependencies import get_redis
 from app.schemas import ShortenRequest, ShortenResponse, StatsResponse
-from url_shortener.app.shortener_service import (
+from app.shortener_service import (
     create_short_url,
     get_original_url,
     get_stats,

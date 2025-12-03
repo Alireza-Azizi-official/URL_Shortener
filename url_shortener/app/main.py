@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from app.db import create_tables_if_not_exist
 from app.dependencies import init_redis
 from app.middleware import VisitLoggingMiddleware
-from url_shortener.app.router import router
+from app.router import router
 
 
 @asynccontextmanager
