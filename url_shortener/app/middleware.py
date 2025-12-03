@@ -6,8 +6,8 @@ from starlette.requests import Request
 
 from app.kafka_producer import publish_visit_event
 
-from .db import AsyncSessionLocal
-from .models import URL, VisitLog
+from app.db import AsyncSessionLocal
+from app.models import URL, VisitLog
 
 
 class VisitLoggingMiddleware(BaseHTTPMiddleware):
