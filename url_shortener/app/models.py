@@ -1,8 +1,6 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func, text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
-
 from app.db import Base
-
 
 class URL(Base):
     __tablename__ = "urls"
@@ -11,9 +9,8 @@ class URL(Base):
     original_url = Column(String(2048), nullable=False)
     short_code = Column(String(20), nullable=False, unique=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    visits_count = Column(Integer, nullable=False, server_default=text('0'))
-
-    visit_logs = relationship("VisitLog", back_populates="urls", cascade="all, delete")
+    visits_count = Column(Integer, nullable=False, server_default=func.cast(0, Integer))
+    visit_logs = relationship("VisitLog", back_populates="url", cascade="all, delete")
 
 
 class VisitLog(Base):
@@ -25,4 +22,4 @@ class VisitLog(Base):
     ip = Column(String(45), nullable=True)
     user_agent = Column(String(512), nullable=True)
 
-    url = relationship('URL', back_populates='visit_logs')
+    url = relationship("URL", back_populates="visit_logs")
