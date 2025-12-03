@@ -14,11 +14,7 @@ router = APIRouter()
 
 
 @router.post("/shorten", response_model=ShortenResponse)
-async def shorten(
-    payload: ShortenRequest,
-    session: AsyncSession = Depends(get_session),
-    redis=Depends(get_redis),
-):
+async def shorten(payload: ShortenRequest, session: AsyncSession = Depends(get_session), redis=Depends(get_redis)):
     try:
         return await create_short_url(payload.url, session, redis)
     except Exception as e:
@@ -26,11 +22,7 @@ async def shorten(
 
 
 @router.get("/{short_code}")
-async def redirect_short(
-    short_code: str,
-    session: AsyncSession = Depends(get_session),
-    redis=Depends(get_redis),
-):
+async def redirect_short(short_code: str, session: AsyncSession = Depends(get_session), redis=Depends(get_redis)):
     original = await get_original_url(short_code, session, redis)
     if not original:
         raise HTTPException(status_code=404, detail="short code not found")
@@ -38,9 +30,5 @@ async def redirect_short(
 
 
 @router.get("/stats/{short_code}", response_model=StatsResponse)
-async def stats(
-    short_code: str,
-    session: AsyncSession = Depends(get_session),
-    redis=Depends(get_redis),
-):
+async def stats(short_code: str, session: AsyncSession = Depends(get_session), redis=Depends(get_redis)):
     return await get_stats(short_code, session, redis)
