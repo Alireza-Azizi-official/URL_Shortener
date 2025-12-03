@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-router = APIRouter(prefix='/api/v1', tags=['URL'])
+router = APIRouter(tags=['URL'])
 
 
 @router.post("/shorten", response_model=ShortenResponse)
