@@ -1,9 +1,10 @@
+from fastapi import HTTPException
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.config import settings
 from app.models import URL
 from app.utils import encode_base62
-from sqlalchemy import select, update
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 URL_KEY = "url:{}"
 COUNT_KEY = "count:{}"
@@ -13,21 +14,24 @@ async def create_short_url(original_url: str, session: AsyncSession, redis):
     if not isinstance(original_url, str):
         original_url = str(original_url)
 
+    q = select(URL).where(URL.original_url == original_url)
+    res = await session.execute(q)
+    existing_url = res.scalar_one_or_none()
+    if existing_url:
+        raise HTTPException(status_code=400, detail="URL already exists")
+
     new_url = URL(original_url=original_url, short_code="temp")
     session.add(new_url)
     await session.flush()
 
-
     new_url.short_code = encode_base62(new_url.id)
     await session.commit()
-
 
     await redis.set(URL_KEY.format(new_url.short_code), new_url.original_url)
     await redis.set(COUNT_KEY.format(new_url.short_code), 0)
 
     short_url = f"{settings.BASE_URL.rstrip('/')}/{new_url.short_code}"
     return {"short_code": new_url.short_code, "short_url": short_url}
-
 
 
 async def get_original_url(short_code: str, session: AsyncSession, redis):
