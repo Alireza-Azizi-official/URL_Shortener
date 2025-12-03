@@ -7,11 +7,11 @@ from fastapi import FastAPI
 from .config import settings
 
 KAFKA_ENABLED = settings.KAFKA_ENABLED
-KAFKA_BOOTSTRAP = settings.KAFKA_BOOTSTRAP_SERVERS
+KAFKA_BOOTSTRAP = settings.KAFKA_BOOTSTRAP_SERVER
 KAFKA_TOPIC = settings.KAFKA_VISIT_TOPIC
 
 
-producer = Optional[AIOKafkaProducer] = None
+producer: Optional[AIOKafkaProducer] = None
 
 
 async def init_kafka(app: FastAPI):
