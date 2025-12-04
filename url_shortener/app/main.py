@@ -18,8 +18,3 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)
 app.add_middleware(VisitLoggingMiddleware)
-
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
