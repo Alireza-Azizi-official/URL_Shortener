@@ -56,8 +56,8 @@ requirements.txt       # Python dependencies
 ### **1. Clone the repository**
 
 ```bash
-git clone <your-repo-url>
-cd <repo-folder>
+git clone <https://github.com/Alireza-Azizi-official/URL_Shortener>
+cd <URL_Shortener>
 ```
 
 ### **2. Create a virtual environment**
