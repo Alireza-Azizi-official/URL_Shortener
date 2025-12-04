@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from app.db import create_tables_if_not_exist
 from app.dependencies import init_redis
+from app.kafka_producer import close_kafka, init_kafka
 from app.log_config import logger
 from app.middleware import VisitLoggingMiddleware
 from app.router import router
@@ -28,7 +29,21 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to create database tables: {e}", exc_info=True)
         raise
+
+    try:
+        await init_kafka(app)
+    except Exception as e:
+        logger.error(f"failed to start kafka: {e}", exc_info=True)
+        raise
+
     yield
+    try:
+        await close_kafka(app)
+        logger.info("kafka is closed.")
+    except Exception as e:
+        logger.error(f"failed to close kafka: {e}", exc_info=True)
+        raise
+
     logger.info("Application shutdown completed.")
 
 
