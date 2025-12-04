@@ -16,8 +16,9 @@ class VisitLoggingMiddleware(BaseHTTPMiddleware):
         result = await call_next(request)
 
         try:
+            SKIP_PATHS = {'docs', 'openapi.json', 'redoc'}
             parts = path.strip("/").split("/")
-            if len(parts) == 1 and parts[0]:
+            if len(parts) == 1 and parts[0] not in SKIP_PATHS:
                 short_code = parts[0]
                 asyncio.create_task(self._record_visits(request, short_code))
         except Exception as e:
