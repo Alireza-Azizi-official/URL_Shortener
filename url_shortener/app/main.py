@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from app.db import create_tables_if_not_exist
@@ -7,6 +8,8 @@ from app.dependencies import init_redis
 from app.log_config import logger
 from app.middleware import VisitLoggingMiddleware
 from app.router import router
+
+load_dotenv()
 
 
 @asynccontextmanager
