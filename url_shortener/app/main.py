@@ -2,15 +2,17 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from slowapi.errors import RateLimitExceeded, _rate_limit_exceeded_handler
+from slowapi.middleware import SlowAPIMiddleware
 
-from app import slowapi_conf
 from app.db import create_tables_if_not_exist
 from app.kafka_consumer import close_kafka_consumer, init_kafka_consumer
 from app.kafka_producer import close_kafka, init_kafka
 from app.log_config import logger
 from app.middleware import VisitLoggingMiddleware
 from app.router import router
-from url_shortener.app.redis_conf import init_redis
+from app.slowapi_conf import limiter
+from app.redis_conf import init_redis
 
 load_dotenv()
 
@@ -63,4 +65,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(VisitLoggingMiddleware)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
