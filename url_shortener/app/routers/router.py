@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .db import get_session
-from .redis_conf import get_redis
+from ..db import get_session
+from ..redis_conf import get_redis
 from .schemas import ShortenRequest, ShortenResponse, StatsResponse
-from .shortener_service import (
+from ..services.shortener_service import (
     create_short_url,
     get_original_url,
     get_stats,

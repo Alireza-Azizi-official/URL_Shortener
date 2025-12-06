@@ -11,7 +11,7 @@ from .log_config import logger
 from .middleware import VisitLoggingMiddleware
 from .rate_limiter_redis import init_rate_limit_redis
 from .redis_conf import init_redis
-from .router import router
+from .routers.router import router
 
 load_dotenv()
 
