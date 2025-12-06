@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.log_config import logger
-from app.models import URL
+from app.models import URL, VisitLog
 from app.utils import encode_base62
 
 URL_KEY = "url:{}"
@@ -97,3 +97,21 @@ async def get_stats(short_code: str, session: AsyncSession, redis):
         "created_at": url_obj.created_at,
         "visits_count": visits,
     }
+
+
+async def get_visits_paginated(short_code: str, session: AsyncSession, page: int = 1, page_size: int = 20):
+    q_url = select(URL).where(URL.short_code == short_code)
+    res = await session.execute(q_url)
+    url_obj = res.scalar_one_or_none()
+    if not url_obj:
+        return []
+
+    q_logs = (
+        select(VisitLog)
+        .where(VisitLog.url_id == url_obj.id)
+        .order_by(VisitLog.timestamp.desc())
+        .limit(page_size)
+        .offset((page - 1) * page_size)
+    )
+    res_logs = await session.execute(q_logs)
+    return res_logs.scalars().all()
