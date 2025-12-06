@@ -3,7 +3,6 @@ from redis.asyncio import from_url
 
 from app.config import settings
 from app.log_config import logger
-from app.main import app
 
 _redis_client = None
 
