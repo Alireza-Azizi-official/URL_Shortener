@@ -51,7 +51,7 @@ class VisitLoggingMiddleware(BaseHTTPMiddleware):
                     .values(visits_count=URL.visits_count + 1)
                 )
                 await session.commit()
-                logger.debug(
+                logger.info(
                     f"Visit recorded for short_code {short_code}, url_id {url_id}"
                 )
                 await publish_visit_event(
