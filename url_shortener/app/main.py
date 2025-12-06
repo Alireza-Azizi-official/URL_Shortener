@@ -2,16 +2,16 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from slowapi.middleware import SlowAPIMiddleware
+from fastapi_limiter import FastAPILimiter
 
 from app.db import create_tables_if_not_exist
 from app.kafka_consumer import close_kafka_consumer, init_kafka_consumer
 from app.kafka_producer import close_kafka, init_kafka
 from app.log_config import logger
 from app.middleware import VisitLoggingMiddleware
-from app.router import router
-from app.slowapi_conf import limiter
+from app.rate_limiter_redis import init_rate_limit_redis
 from app.redis_conf import init_redis
+from app.router import router
 
 load_dotenv()
 
@@ -24,6 +24,13 @@ async def lifespan(app: FastAPI):
         logger.info("redis initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize Redis: {e}", exc_info=True)
+        raise
+    try:
+        rate_limit_redis = await init_rate_limit_redis()
+        await FastAPILimiter.init(rate_limit_redis)
+        logger.info("fastapi limiter initialized successfully.")
+    except Exception as e:
+        logger.error(f"failed to initialized fastapi_limiter: {e}", exc_info=True)
         raise
 
     try:
@@ -64,6 +71,4 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)
-app.state.limiter = limiter
-app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(VisitLoggingMiddleware)
