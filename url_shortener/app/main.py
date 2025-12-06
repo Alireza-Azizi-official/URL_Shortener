@@ -3,13 +3,14 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from app import slowapi_conf
 from app.db import create_tables_if_not_exist
-from app.dependencies import init_redis
 from app.kafka_consumer import close_kafka_consumer, init_kafka_consumer
 from app.kafka_producer import close_kafka, init_kafka
 from app.log_config import logger
 from app.middleware import VisitLoggingMiddleware
 from app.router import router
+from url_shortener.app.redis_conf import init_redis
 
 load_dotenv()
 
