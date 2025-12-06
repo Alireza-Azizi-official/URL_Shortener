@@ -17,6 +17,9 @@ A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, **Redis
 * Alembic migrations for database schema management.
 * Middleware for logging all visits.
 * Configurable via environment variables.
+* Nginx as a load balancer and proxy reverser.
+* Rate limiter to control and manage the requests number.
+* Pagination to control the Read requests and db heat control
 
 ---
 
