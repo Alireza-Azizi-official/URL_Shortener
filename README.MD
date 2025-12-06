@@ -2,6 +2,9 @@
 
 A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, **Redis**, and **Kafka**. Supports visit tracking, caching, and asynchronous database operations using SQLAlchemy.
 
+
+![Image](diagram.png)
+
 ---
 
 ## **Features**
@@ -23,8 +26,10 @@ A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, **Redis
 * **FastAPI** – Web framework
 * **SQLAlchemy (async)** – ORM for PostgreSQL
 * **PostgreSQL** – Primary database
+* **Nginx** – Load Balancer
 * **Redis** – Caching layer for URLs and visit counts
 * **Kafka (optional)** – Event streaming for visits
+* **Kafka Cluster**
 * **Alembic** – Database migrations
 * **Uvicorn** – ASGI server
 
@@ -34,19 +39,25 @@ A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, **Redis
 
 ```
 app/
-├── config.py          # Application settings with Pydantic
-├── db.py              # Database engine & session setup
-├── kafka_producer.py  # Kafka producer initialization and event publishing
-├── log_config.py      # Logger configuration
-├── middleware.py      # Visit logging middleware
-├── models.py          # SQLAlchemy models (URL, VisitLog)
-├── router.py          # API routes
-├── utils.py           # Base62 encoding/decoding
-└── dependencies.py    # Redis and other dependency initialization
-alembic/               # Alembic migration scripts
-.env                   # Environment variables
-main.py                # FastAPI application entrypoint
-requirements.txt       # Python dependencies
+├── config.py              # Application settings with Pydantic
+├── db.py                  # Database engine & session setup
+├── kafka_producer.py      # Kafka producer initialization and event publishing
+├── kafka_consumer.py      # Kafka consumer initialization and event consumer
+├── rate_limiter_redis.py  # A specific redis client for rate limiter
+├── log_config.py          # Logger configuration
+├── middleware.py          # Visit logging middleware
+├── models.py              # SQLAlchemy models (URL, VisitLog)
+├── router.py              # API routes
+├── schemas.py             # Pydantic models
+├── main.py                # core of the app
+├── utils.py               # Base62 encoding/decoding
+├── shortener_service.py   # API's logic
+└── redis_conf.py          # Redis and other dependency initialization
+
+alembic/                   # Alembic migration scripts
+.env                       # Environment variables
+main.py                    # FastAPI application entrypoint
+requirements.txt           # Python dependencies
 ```
 
 ---
