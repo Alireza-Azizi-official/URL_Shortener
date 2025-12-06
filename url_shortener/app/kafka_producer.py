@@ -23,7 +23,7 @@ async def init_kafka(app: FastAPI):
     logger.info("initializing kafka producer...")
     try:
         producer = AIOKafkaProducer(
-            bootstrap_server=KAFKA_BOOTSTRAP,
+            bootstrap_servers=KAFKA_BOOTSTRAP,
             value_serializer=lambda v: json.dumps(v).encode("utf-8"),
             linger_ms=5,
             acks="all",
