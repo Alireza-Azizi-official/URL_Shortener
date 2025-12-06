@@ -1,22 +1,12 @@
 FROM python:3.12-slim
 
+WORKDIR /code
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV APP_HOME=/app
+COPY . /code
 
-WORKDIR $APP_HOME
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-
-COPY url_shortener ./url_shortener
-
-
-ARG APP_PORT=8000
-EXPOSE $APP_PORT
-
+EXPOSE 8000
 
 CMD ["uvicorn", "url_shortener.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
