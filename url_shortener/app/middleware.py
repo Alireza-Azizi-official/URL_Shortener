@@ -4,10 +4,10 @@ from sqlalchemy import select, update
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
-from app.db import AsyncSessionLocal
-from app.kafka_producer import publish_visit_event
-from app.log_config import logger
-from app.models import URL, VisitLog
+from .db import AsyncSessionLocal
+from .kafka_producer import publish_visit_event
+from .log_config import logger
+from .models import URL, VisitLog
 
 
 class VisitLoggingMiddleware(BaseHTTPMiddleware):

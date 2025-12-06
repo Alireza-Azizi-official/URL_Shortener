@@ -3,7 +3,7 @@ from typing import Optional
 
 from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
-from app.log_config import logger
+from .log_config import logger
 
 from .config import settings
 

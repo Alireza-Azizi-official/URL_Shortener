@@ -1,7 +1,7 @@
 import redis.asyncio as redis
 
-from app.config import settings
-from app.log_config import logger
+from .config import settings
+from .log_config import logger
 
 _rate_limit_redis = None
 

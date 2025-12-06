@@ -1,8 +1,8 @@
 from fastapi import Request
 from redis.asyncio import from_url
 
-from app.config import settings
-from app.log_config import logger
+from .config import settings
+from .log_config import logger
 
 _redis_client = None
 

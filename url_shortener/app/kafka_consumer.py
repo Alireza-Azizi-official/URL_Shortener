@@ -5,10 +5,10 @@ from typing import Optional
 from aiokafka import AIOKafkaConsumer
 from fastapi import FastAPI
 
-from app.config import settings
-from app.db import AsyncSessionLocal
-from app.log_config import logger
-from app.models import URL, VisitLog
+from .config import settings
+from .db import AsyncSessionLocal
+from .log_config import logger
+from .models import URL, VisitLog
 
 KAFKA_ENABLED = settings.KAFKA_ENABLED
 KAFKA_BOOTSTRAP = settings.KAFKA_BOOTSTRAP_SERVER

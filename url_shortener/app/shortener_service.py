@@ -2,10 +2,10 @@ from fastapi import HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
-from app.log_config import logger
-from app.models import URL, VisitLog
-from app.utils import encode_base62
+from .config import settings
+from .log_config import logger
+from .models import URL, VisitLog
+from .utils import encode_base62
 
 URL_KEY = "url:{}"
 COUNT_KEY = "count:{}"

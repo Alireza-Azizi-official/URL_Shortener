@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
 
-from app.db import create_tables_if_not_exist
-from app.kafka_consumer import close_kafka_consumer, init_kafka_consumer
-from app.kafka_producer import close_kafka, init_kafka
-from app.log_config import logger
-from app.middleware import VisitLoggingMiddleware
-from app.rate_limiter_redis import init_rate_limit_redis
-from app.redis_conf import init_redis
-from app.router import router
+from .db import create_tables_if_not_exist
+from .kafka_consumer import close_kafka_consumer, init_kafka_consumer
+from .kafka_producer import close_kafka, init_kafka
+from .log_config import logger
+from .middleware import VisitLoggingMiddleware
+from .rate_limiter_redis import init_rate_limit_redis
+from .redis_conf import init_redis
+from .router import router
 
 load_dotenv()
 
