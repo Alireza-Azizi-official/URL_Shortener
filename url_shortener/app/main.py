@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from slowapi.errors import RateLimitExceeded, _rate_limit_exceeded_handler
 from slowapi.middleware import SlowAPIMiddleware
 
 from app.db import create_tables_if_not_exist
@@ -68,4 +67,3 @@ app.include_router(router)
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(VisitLoggingMiddleware)
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
