@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from url_shortener.app.redis_conf import get_redis
+from app.redis_conf import get_redis
 from app.schemas import ShortenRequest, ShortenResponse, StatsResponse
 from app.shortener_service import (
     create_short_url,
