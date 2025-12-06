@@ -90,7 +90,7 @@ async def process_visit_event(event: dict):
         logger.error(f"failed to process visit event: {e}", exc_info=True)
 
 
-async def close_kafka(app: FastAPI):
+async def close_kafka_consumer(app: FastAPI):
     global consumer, consumer_task
     if consumer_task:
         consumer_task.cancel()
