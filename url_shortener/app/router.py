@@ -1,3 +1,7 @@
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db import get_session
 from app.dependencies import get_redis
 from app.schemas import ShortenRequest, ShortenResponse, StatsResponse
@@ -5,10 +9,9 @@ from app.shortener_service import (
     create_short_url,
     get_original_url,
     get_stats,
+    get_visits_paginated,
 )
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
+
 
 router = APIRouter()
 
@@ -32,3 +35,8 @@ async def redirect_short(short_code: str, session: AsyncSession = Depends(get_se
 @router.get("/stats/{short_code}", response_model=StatsResponse)
 async def stats(short_code: str, session: AsyncSession = Depends(get_session), redis=Depends(get_redis)):
     return await get_stats(short_code, session, redis)
+
+@router.get('/urls/{short_code}/visits')
+async def visits(short_code: str, page: int = Query(1, ge=1), page_size: int = Query(20, le=100), session: AsyncSession = Depends(get_session)):
+    logs = await get_visits_paginated(short_code, session, page, page_size)
+    return {'page': page, 'page_size': page_size, 'logs': logs}
