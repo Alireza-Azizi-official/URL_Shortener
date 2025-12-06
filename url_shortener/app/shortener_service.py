@@ -73,7 +73,7 @@ async def get_original_url(short_code: str, session: AsyncSession, redis):
 
 
 async def get_stats(short_code: str, session: AsyncSession, redis):
-    logger.info(f"fetching stats for shor_code: {short_code}")
+    logger.info(f"fetching stats for short_code: {short_code}")
     cached_count = await redis.get(COUNT_KEY.format(short_code))
 
     q = select(URL).where(URL.short_code == short_code)
