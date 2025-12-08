@@ -49,7 +49,7 @@ async def close_kafka(app: FastAPI):
 
 
 async def publish_visit_event(event: dict):
-    if not KAFKA_ENABLED or not producer:
+    if not KAFKA_ENABLED:
         logger.debug("kafka disabled. event not sent")
         return
     if not producer:
