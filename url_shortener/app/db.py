@@ -1,5 +1,4 @@
-import sqlalchemy as sa
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
 from .config import settings
@@ -15,10 +14,9 @@ engine: AsyncEngine = create_async_engine(
     pool_size=int(settings.DB_POOL_SIZE),
     max_overflow=int(settings.DB_MAX_OVERFLOW),
     pool_timeout=int(settings.DB_POOL_TIMEOUT),
-    future=True,
 )
 
-AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, class_=sa.ext.asyncio.AsyncSession)
+AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
 
 
 async def create_tables_if_not_exist():
