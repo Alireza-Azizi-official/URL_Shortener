@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
         await FastAPILimiter.init(rate_limit_redis)
         logger.info("fastapi limiter initialized successfully.")
     except Exception as e:
-        logger.error(f"failed to initialized fastapi_limiter: {e}", exc_info=True)
+        logger.error(f"failed to initialize fastapi_limiter: {e}", exc_info=True)
         raise
 
     try:
