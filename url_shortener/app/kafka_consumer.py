@@ -6,9 +6,7 @@ from aiokafka import AIOKafkaConsumer
 from fastapi import FastAPI
 
 from .config import settings
-from .db import AsyncSessionLocal
 from .log_config import logger
-from .models import URL, VisitLog
 
 KAFKA_ENABLED = settings.KAFKA_ENABLED
 KAFKA_BOOTSTRAP = settings.KAFKA_BOOTSTRAP_SERVER
@@ -70,19 +68,8 @@ async def process_visit_event(event: dict):
         logger.warning(f"invalid visit event received: {event}")
         return
     try:
-        async with AsyncSessionLocal() as session:
-            visit = VisitLog(
-                url_id=url_id,
-                ip=ip,
-                user_agent="(unknown)",
-            )
-            session.add(visit)
-            await session.execute(
-                URL.__table__.update()
-                .where(URL.id == url_id)
-                .values(visits_count=URL.visits_count + 1)
-            )
-            await session.commit()
+        # Note: Visit logging and count increment are already handled by middleware
+        # This consumer can be used for additional async processing (analytics, notifications, etc.)
         logger.info(
             f"processed visit event: short_code={short_code}, url_id={url_id}, ip={ip}"
         )
