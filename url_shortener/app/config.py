@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     KAFKA_VISIT_TOPIC: str = "visit_events"
     POSTGRES_DB: str
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: int
+    POSTGRES_PASSWORD: str
 
     class Config:
         env_file = ".env"
