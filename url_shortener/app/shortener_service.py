@@ -20,8 +20,9 @@ async def create_short_url(original_url: str, session: AsyncSession, redis):
     res = await session.execute(q)
     existing_url = res.scalar_one_or_none()
     if existing_url:
-        logger.warning(f"url already exists: {original_url}")
-        raise HTTPException(status_code=400, detail="URL already exists")
+        logger.info(f"url already exists: {original_url}, returning existing short code")
+        short_url = f"{settings.BASE_URL.rstrip('/')}/{existing_url.short_code}"
+        return {"short_code": existing_url.short_code, "short_url": short_url}
 
     new_url = URL(original_url=original_url, short_code="temp")
     session.add(new_url)
@@ -61,14 +62,7 @@ async def get_original_url(short_code: str, session: AsyncSession, redis):
     await redis.set(URL_KEY.format(short_code), url_obj.original_url)
     await redis.set(COUNT_KEY.format(short_code), url_obj.visits_count)
 
-    await session.execute(
-        update(URL)
-        .where(URL.id == url_obj.id)
-        .values(visits_count=url_obj.visits_count + 1)
-    )
-    await session.commit()
-    logger.info(f"updated visit count for: {short_code}")
-
+    logger.info(f"cached url for short code: {short_code}")
     return url_obj.original_url
 
 
@@ -80,7 +74,7 @@ async def get_stats(short_code: str, session: AsyncSession, redis):
     res = await session.execute(q)
     url_obj = res.scalar_one_or_none()
     if not url_obj:
-        logger.warning(f"stats requested for none-existing short code: {short_code}")
+        logger.warning(f"stats requested for non-existent short code: {short_code}")
         return None
 
     visits = int(cached_count) if cached_count is not None else url_obj.visits_count
@@ -104,7 +98,7 @@ async def get_visits_paginated(short_code: str, session: AsyncSession, page: int
     res = await session.execute(q_url)
     url_obj = res.scalar_one_or_none()
     if not url_obj:
-        return []
+        return None
 
     q_logs = (
         select(VisitLog)
