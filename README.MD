@@ -2,9 +2,6 @@
 
 A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, and **Redis**. Supports visit tracking, caching, and asynchronous database operations using SQLAlchemy.
 
-
-![Image](diagram.png)
-
 ---
 
 ## **Features**
