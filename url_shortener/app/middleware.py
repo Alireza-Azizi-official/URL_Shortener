@@ -5,7 +5,6 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 from .db import AsyncSessionLocal
-from .kafka_producer import publish_visit_event
 from .log_config import logger
 from .models import URL, VisitLog
 
@@ -53,13 +52,6 @@ class VisitLoggingMiddleware(BaseHTTPMiddleware):
                 await session.commit()
                 logger.info(
                     f"Visit recorded for short_code {short_code}, url_id {url_id}"
-                )
-                await publish_visit_event(
-                    {
-                        "url_id": url_id,
-                        "short_code": short_code,
-                        "ip": request.client.host if request.client else None,
-                    }
                 )
         except Exception as e:
             logger.error(
