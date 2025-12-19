@@ -15,7 +15,9 @@ class VisitLoggingMiddleware(BaseHTTPMiddleware):
         result = await call_next(request)
 
         try:
-            SKIP_PATHS = {'docs', 'openapi.json', 'redoc'}
+            SKIP_PATHS = {'docs', 'openapi.json', 'redoc', 'static', 'shorten', 'stats', 'urls', ''}
+            if path.startswith('/static') or path.startswith('/shorten') or path.startswith('/stats') or path.startswith('/urls'):
+                return result
             parts = path.strip("/").split("/")
             if len(parts) == 1 and parts[0] not in SKIP_PATHS:
                 short_code = parts[0]

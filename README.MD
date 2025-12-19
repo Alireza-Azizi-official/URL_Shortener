@@ -1,11 +1,12 @@
 # FastAPI URL Shortener
 
-A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, and **Redis**. Supports visit tracking, caching, and asynchronous database operations using SQLAlchemy.
+A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, and **Redis**. Features a modern, minimalistic dark-themed web interface for easy URL shortening and statistics tracking.
 
 ---
 
 ## **Features**
 
+* **Modern Web Interface** - Beautiful, minimalistic dark-themed frontend
 * Shorten URLs and generate unique short codes.
 * Asynchronous CRUD operations using SQLAlchemy with PostgreSQL.
 * Visit tracking with automatic incrementing of visit counts.
@@ -20,36 +21,47 @@ A high-performance URL shortener built with **FastAPI**, **PostgreSQL**, and **R
 
 ## **Tech Stack**
 
-* **Python 3.10.11**
+* **Python 3.12**
 * **FastAPI** – Web framework
 * **SQLAlchemy (async)** – ORM for PostgreSQL
 * **PostgreSQL** – Primary database
 * **Redis** – Caching layer for URLs and visit counts
 * **Alembic** – Database migrations
 * **Uvicorn** – ASGI server
+* **HTML/CSS/JavaScript** – Modern frontend interface
 
 ---
 
 ## **Project Structure**
 
 ```
-app/
-├── config.py              # Application settings with Pydantic
-├── db.py                  # Database engine & session setup
-├── rate_limiter_redis.py  # A specific redis client for rate limiter
-├── log_config.py          # Logger configuration
-├── middleware.py          # Visit logging middleware
-├── models.py              # SQLAlchemy models (URL, VisitLog)
-├── router.py              # API routes
-├── schemas.py             # Pydantic models
-├── main.py                # core of the app
-├── utils.py               # Base62 encoding/decoding
-├── shortener_service.py   # API's logic
-└── redis_conf.py          # Redis and other dependency initialization
-
-alembic/                   # Alembic migration scripts
-.env                       # Environment variables
-requirements.txt           # Python dependencies
+URL_Shortener/
+├── url_shortener/
+│   └── app/
+│       ├── config.py              # Application settings with Pydantic
+│       ├── db.py                  # Database engine & session setup
+│       ├── rate_limiter_redis.py  # A specific redis client for rate limiter
+│       ├── log_config.py          # Logger configuration
+│       ├── middleware.py          # Visit logging middleware
+│       ├── models.py              # SQLAlchemy models (URL, VisitLog)
+│       ├── router.py              # API routes
+│       ├── schemas.py             # Pydantic models
+│       ├── main.py                # Core of the app
+│       ├── utils.py               # Base62 encoding/decoding
+│       ├── shortener_service.py   # API's logic
+│       └── redis_conf.py          # Redis and other dependency initialization
+├── static/                        # Frontend files
+│   ├── index.html                 # Main frontend page
+│   ├── css/
+│   │   └── style.css              # Dark theme styles
+│   └── js/
+│       └── app.js                 # Frontend JavaScript
+├── migrations/                    # Alembic migration scripts
+├── .env                           # Environment variables (create from env.example)
+├── env.example                    # Environment variables template
+├── requirements.txt               # Python dependencies
+├── Dockerfile                     # Docker configuration
+└── docker-compose.yml             # Docker Compose configuration
 ```
 
 ---
@@ -79,17 +91,33 @@ pip install -r requirements.txt
 
 ### **4. Set environment variables**
 
-Create a `.env` file:
+Copy the example environment file and update it:
+
+```bash
+# On Linux/Mac
+cp env.example .env
+
+# On Windows
+copy env.example .env
+```
+
+Edit `.env` and set the following variables:
 
 ```
 DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/url_shortener
 REDIS_URL=redis://localhost:6379/0
 BASE_URL=http://127.0.0.1:8000
+POSTGRES_DB=url_shortener
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
 ```
 
 * `DATABASE_URL`: PostgreSQL async connection URL.
 * `REDIS_URL`: Redis server URL.
 * `BASE_URL`: Base URL for short URLs.
+* `POSTGRES_DB`: PostgreSQL database name.
+* `POSTGRES_USER`: PostgreSQL username.
+* `POSTGRES_PASSWORD`: PostgreSQL password.
 
 ---
 
@@ -105,13 +133,48 @@ alembic upgrade head
 
 ## **Running the application**
 
+### **Option 1: Using Docker Compose (Recommended)**
+
+The easiest way to run the application:
+
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+docker-compose up --build
 ```
 
-* The API will be available at `http://127.0.0.1:8000`.
+This will start:
+- PostgreSQL database
+- Redis cache
+- FastAPI application with frontend
+
+The web interface will be available at `http://localhost:8000`
+
+### **Option 2: Manual Setup**
+
+1. Make sure PostgreSQL and Redis are running locally
+2. Run Alembic migrations:
+   ```bash
+   cd url_shortener
+   alembic upgrade head
+   ```
+3. Start the application:
+   ```bash
+   uvicorn url_shortener.app.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+* The web interface will be available at `http://127.0.0.1:8000`
+* The API documentation will be available at `http://127.0.0.1:8000/docs`
 
 ---
+
+## **Web Interface**
+
+The application includes a modern, minimalistic dark-themed web interface accessible at the root URL (`/`). Features include:
+
+* **URL Shortening** - Enter any URL to get a shortened version
+* **Copy to Clipboard** - One-click copy of shortened URLs
+* **Statistics View** - View visit counts and creation date for shortened URLs
+* **Responsive Design** - Works on desktop and mobile devices
+* **Dark Theme** - Easy on the eyes with a modern dark color scheme
 
 ## **API Endpoints**
 
@@ -177,7 +240,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
   * Database (`visit_logs` table)
   * Redis (increment count)
-* Skips documentation paths (`docs`, `openapi.json`, `redoc`).
+* Skips documentation paths (`docs`, `openapi.json`, `redoc`) and static files (`/static`).
 
 ---
 

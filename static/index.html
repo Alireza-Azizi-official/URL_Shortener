@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 URL Shortener</h1>
+            <p class="subtitle">Shorten your URLs quickly and easily</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="form-section">
+                    <h2>Shorten URL</h2>
+                    <form id="shortenForm">
+                        <div class="input-group">
+                            <input 
+                                type="url" 
+                                id="urlInput" 
+                                placeholder="Enter your long URL here..." 
+                                required
+                                autocomplete="off"
+                            >
+                            <button type="submit" id="shortenBtn">
+                                <span class="btn-text">Shorten</span>
+                                <span class="btn-loader" style="display: none;">⏳</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-box">
+                        <div class="result-item">
+                            <label>Short URL:</label>
+                            <div class="result-value">
+                                <input type="text" id="shortUrl" readonly>
+                                <button class="copy-btn" id="copyBtn" title="Copy to clipboard">
+                                    📋
+                                </button>
+                            </div>
+                        </div>
+                        <div class="result-actions">
+                            <button class="action-btn" id="viewStatsBtn">View Stats</button>
+                            <button class="action-btn secondary" id="newUrlBtn">Shorten Another</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="statsSection" class="stats-section" style="display: none;">
+                    <h3>Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Original URL</div>
+                            <div class="stat-value" id="originalUrl">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Visits</div>
+                            <div class="stat-value" id="visitsCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Created</div>
+                            <div class="stat-value" id="createdAt">-</div>
+                        </div>
+                    </div>
+                    <div class="stats-actions">
+                        <button class="action-btn secondary" id="backToFormBtn">Back</button>
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </div>
+
+            <div class="features">
+                <h3>Features</h3>
+                <ul>
+                    <li>✨ Fast and reliable URL shortening</li>
+                    <li>📊 Track visit statistics</li>
+                    <li>🔒 Secure and private</li>
+                    <li>⚡ Lightning fast redirects</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
+
